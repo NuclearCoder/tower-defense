@@ -1,3 +1,5 @@
-require(['game/Game'], function (Game) {
+require(["game/Game"], function (Game) {
+    "use strict";
+
     Game.init();
 });

@@ -1,8 +1,10 @@
-define(function (require) {
-    require('jquery');
-    let Util = require('./Util');
-    let Map = require('./Map');
-    let Render = require('./Render');
+define(require => {
+    "use strict";
+
+    require("jquery");
+    let Util = require("./Util");
+    let Map = require("./Map");
+    let Render = require("./Render");
 
     let self = {
         init: function () {
@@ -35,19 +37,25 @@ define(function (require) {
                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1]
                 ],
                 tileset: {
-                    name: 'A',
-                    count: 3,
-                    width: 2,
-                    height: 2,
-                    cell: 16
+                    name: "A",
+                    count: 48,
+                    width: 8,
+                    height: 6,
+                    cellsize: 16
                 }
-            }, self.start);
+            }, self.loaded);
+        },
+
+        loaded: function () {
+            Util.log("Resources loaded.");
+
+            self.start();
         },
 
         start: function () {
             Render.drawAll();
 
-            Util.log('Game started.');
+            Util.log("Game started.");
         }
     };
 

@@ -1,28 +1,30 @@
-define(function (require) {
-    require('jquery');
-    require('jcanvas');
-    let Map = require('./Map');
+define(require => {
+    "use strict";
 
-    let canvas = $('#game');
-    let log = $('#game-log');
+    require("jquery");
+    require("jcanvas");
 
-    let self = {
+    let canvas = $("#game");
+    let log = $("#game-log");
+
+    let self;
+    self = {
         canvas: canvas,
         log: log,
 
         init: function () {
             // layer 1: background
             canvas.addLayer({
-                type: 'rectangle',
-                name: 'background',
-                fillStyle: '#fff',
+                type: "rectangle",
+                name: "background",
+                fillStyle: "#fff",
                 x: 0, y: 0, width: canvas.width(), height: canvas.height(),
                 fromCenter: false
             })
             // layer 2: map tiles
             .addLayer({
-                type: 'function',
-                name: 'tiles',
+                type: "function",
+                name: "tiles",
                 fn: self.drawTiles
             });
         },
@@ -33,25 +35,26 @@ define(function (require) {
 
         drawTiles: function () {
             let map = self.map;
-            let size = map.tileset.cell;
+            let size = map.tileset.cellsize;
 
-            for (let ty = 0, y = 0; ty < map.height; ++ty, y += size) {
-                for (let tx = 0, x = 0; tx < map.width; ++tx, x += size) {
-                    let cell = map.at(tx, ty);
-                    let tile = map.tileset.at(cell);
+            let y = 0;
+            map.cells.forEach(row => {
+                let x = 0;
+                row.forEach(cell => {
+                    let tile = map.tileset.at[cell];
 
                     canvas.drawImage({
                         source: map.tileset.image,
-                        x: x, y: y,
-                        width: size, height: size,
+                        x: x, y: y, width: size, height: size,
                         fromCenter: false,
-                        sx: tile.x, sy: tile.y,
-                        sWidth: size, sHeight: size
+                        sx: tile.x, sy: tile.y, sWidth: size, sHeight: size
                     });
-                }
-            }
-        }
 
+                    x += size;
+                });
+                y += size;
+            });
+        }
     };
 
     return self;
