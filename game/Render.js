@@ -1,5 +1,6 @@
-define(function(require) {
-    require(['jquery', 'jcanvas']);
+define(function (require) {
+    require('jquery');
+    require('jcanvas');
     let Map = require('./Map');
 
     let canvas = $('#game');
@@ -9,47 +10,49 @@ define(function(require) {
         canvas: canvas,
         log: log,
 
-        init: function() {
+        init: function () {
             // layer 1: background
             canvas.addLayer({
                 type: 'rectangle',
+                name: 'background',
                 fillStyle: '#fff',
-                x: 0, y: 0, width: canvas.width, height: canvas.height
-            });
-            // layer 2: border
-            canvas.addLayer({
-                type: 'rectangle',
-                strokeStyle: '#000',
-                x: 0, y: 0, width: canvas.width, height: canvas.height
-            });
-            // layer 3: map tiles
-            canvas.addLayer({
+                x: 0, y: 0, width: canvas.width(), height: canvas.height(),
+                fromCenter: false
+            })
+            // layer 2: map tiles
+            .addLayer({
                 type: 'function',
                 name: 'tiles',
                 fn: self.drawTiles
             });
         },
 
-        drawAll: function() {
+        drawAll: function () {
             canvas.drawLayers();
         },
 
-        drawTiles: function(ctx) {
+        drawTiles: function () {
             let map = self.map;
-            let tileset = map.tileset;
-            let path = 'tileset/tile-' + tileset.name + '.png';
-            
-            for (let y = 0; y < map.height; ++y) {
-                for (let x = 0; x < map.width; ++x) {
-                    let cell = map.at(x, y);
-                    let tile = tileset.at(cell);
-                    
-                    ctx.drawImage(path, tile.x, tile.y, tile.width, tile.height);
+            let size = map.tileset.cell;
+
+            for (let ty = 0, y = 0; ty < map.height; ++ty, y += size) {
+                for (let tx = 0, x = 0; tx < map.width; ++tx, x += size) {
+                    let cell = map.at(tx, ty);
+                    let tile = map.tileset.at(cell);
+
+                    canvas.drawImage({
+                        source: map.tileset.image,
+                        x: x, y: y,
+                        width: size, height: size,
+                        fromCenter: false,
+                        sx: tile.x, sy: tile.y,
+                        sWidth: size, sHeight: size
+                    });
                 }
             }
         }
-        
-    }
+
+    };
 
     return self;
 });
