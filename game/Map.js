@@ -1,4 +1,6 @@
 define(require => {
+    "use strict";
+
     let Tileset = require('./Tileset');
 
     return class {
