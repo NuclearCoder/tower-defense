@@ -3,14 +3,14 @@ define(require => {
 
     require("jquery");
     let Util = require("./Util");
-    let Map = require("./Map");
     let Render = require("./Render");
+
+    let Map = require("./Map");
+    let Turret = require("./Turret");
 
     let self = {
         init: function () {
-            Render.init();
-
-            Render.map = new Map({
+            self.map = new Map({
                 width: 20,
                 height: 20,
                 cells: [
@@ -43,19 +43,23 @@ define(require => {
                     height: 6,
                     cellsize: 16
                 }
-            }, self.loaded);
-        },
+            });
+            self.turrets = [];
+            self.mobs = [];
 
-        loaded: function () {
-            Util.log("Resources loaded.");
+            Render.init(self.map);
+
+            Util.log("Resources initialized.");
 
             self.start();
         },
 
         start: function () {
-            Render.drawAll();
-
             Util.log("Game started.");
+
+
+            Render.addTurret(new Turret({type:"1-1", radius:3}), 1, 10, 10);
+            Render.drawAll();
         }
     };
 

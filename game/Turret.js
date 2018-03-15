@@ -3,7 +3,8 @@ define(require => {
 
     return class {
         constructor(data) {
-
+            this.type = data.type;
+            this.radius = data.radius;
         }
     };
 });
