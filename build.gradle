@@ -1,0 +1,78 @@
+apply plugin: 'kotlin2js'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://nexus.astraeus.nl/nexus/content/groups/public"
+    }
+}
+
+buildscript {
+    ext.kotlin_version = '1.2.30'
+    repositories {
+        maven {
+            url "http://nexus.astraeus.nl/nexus/content/groups/public"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+dependencies {
+    compile "perses.games:kudens:1.1.6-SNAPSHOT"
+}
+
+task jarSources(type:Jar){
+    from sourceSets.main.allSource
+    classifier = 'source'
+}
+
+artifacts {
+    compile jarSources
+}
+
+compileKotlin2Js {
+    kotlinOptions.metaInfo = true
+
+    compileKotlin2Js.kotlinOptions.sourceMap = true
+    compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/generated/game.js"
+    compileKotlin2Js.kotlinOptions.suppressWarnings = true
+    compileKotlin2Js.kotlinOptions.verbose = true
+}
+
+def outDir = "${buildDir}/kotlin2js/main/"
+def webDir = "${projectDir}/web/"
+
+jar {
+    from sourceSets.main.allSource
+    include "**/*.kt"
+
+    from outDir
+    include "**/*.js"
+
+    manifest {
+        attributes(
+                "Kotlin-JS-Module-Name": "game"
+        )
+    }
+}
+
+jar.dependsOn(compileKotlin2Js)
+
+compileKotlin2Js.doLast {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${projectDir}/web/js/kotlin"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+}
