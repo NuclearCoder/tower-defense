@@ -3,6 +3,7 @@ package nuke.towerdefense
 import games.perses.game.DrawMode
 import games.perses.game.Game
 import games.perses.game.Screen
+import games.perses.map.tiled.TiledMap
 import games.perses.sprite.Sprite
 import games.perses.sprite.SpriteBatch
 import games.perses.text.Texts
@@ -18,6 +19,8 @@ class GameScreen : Screen() {
     var sprite = Sprite("smiley")
     var x = 0f
     var y = 0f
+
+    var map = TiledMap()
 
     override fun loadResources() {
         Textures.load("smiley", "img/smiley.png")
